@@ -1,0 +1,9 @@
+D:\smth\походу уник\spp\spp5\DependencyInjectionContainer\bin\Debug\netcoreapp3.1\DependencyInjectionContainer.deps.json
+D:\smth\походу уник\spp\spp5\DependencyInjectionContainer\bin\Debug\netcoreapp3.1\DependencyInjectionContainer.dll
+D:\smth\походу уник\spp\spp5\DependencyInjectionContainer\bin\Debug\netcoreapp3.1\DependencyInjectionContainer.pdb
+D:\smth\походу уник\spp\spp5\DependencyInjectionContainer\obj\Debug\netcoreapp3.1\DependencyInjectionContainer.csprojAssemblyReference.cache
+D:\smth\походу уник\spp\spp5\DependencyInjectionContainer\obj\Debug\netcoreapp3.1\DependencyInjectionContainer.AssemblyInfoInputs.cache
+D:\smth\походу уник\spp\spp5\DependencyInjectionContainer\obj\Debug\netcoreapp3.1\DependencyInjectionContainer.AssemblyInfo.cs
+D:\smth\походу уник\spp\spp5\DependencyInjectionContainer\obj\Debug\netcoreapp3.1\DependencyInjectionContainer.csproj.CoreCompileInputs.cache
+D:\smth\походу уник\spp\spp5\DependencyInjectionContainer\obj\Debug\netcoreapp3.1\DependencyInjectionContainer.dll
+D:\smth\походу уник\spp\spp5\DependencyInjectionContainer\obj\Debug\netcoreapp3.1\DependencyInjectionContainer.pdb
