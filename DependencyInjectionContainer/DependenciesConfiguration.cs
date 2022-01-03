@@ -7,7 +7,7 @@ namespace DependencyInjectionContainer
 {
     public class DependenciesConfiguration
     {
-        private readonly Dictionary<Type, List<Dependency>> _dependencies = new Dictionary<Type, List<Dependency>>();
+        public Dictionary<Type, List<Dependency>> _dependencies = new Dictionary<Type, List<Dependency>>();
 
         private readonly List<Type> _excludedTypes = new List<Type>();
 
@@ -61,10 +61,16 @@ namespace DependencyInjectionContainer
             if (!implementation.IsClass) throw new ArgumentException($"{implementation} must be a reference type");
             if (implementation.IsAbstract || implementation.IsInterface)
                 throw new ArgumentException($"{implementation} must be non abstract");
-            if (@interface.IsAssignableFrom(implementation) ||
+            if (@interface.IsAssignableFrom(implementation) || (
                 implementation.IsGenericTypeDefinition && @interface.IsGenericTypeDefinition &&
-                 IsAssignableFromGeneric(implementation, @interface))
+                 IsAssignableFromGeneric(implementation, @interface)))
             {
+                if (@interface.IsGenericType)
+                {
+                    @interface = @interface.GetGenericTypeDefinition();
+                    implementation = implementation.GetGenericTypeDefinition();
+                }
+
                 var dependency = new Dependency(implementation, lifeCycle, name);
                 if (_dependencies.ContainsKey(@interface))
                 {

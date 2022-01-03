@@ -8,8 +8,28 @@ namespace DependencyInjectionContainer
 {
     public static class Creator
     {
+
+        public static object CreateSingleton(Dependency dependency, DependenciesConfiguration dependencyConfiguration)
+        {
+            var ctor = getConstrZeroArgs(dependency.Type);
+            dependency.Instance = ctor.Invoke(new object[0]);
+
+            var fields = dependency.Type.GetFields();
+            var values = ProvideFields(fields, dependencyConfiguration).ToArray();
+
+            for (int i =  0; i < fields.Length; i++)
+            {
+                fields[i].SetValue(dependency.Instance, values[i]);
+            }
+            return dependency.Instance;
+        }
+        private static ConstructorInfo getConstrZeroArgs(Type type)
+        {
+            return type.GetConstructor(new Type[0]);
+        }
         public static object CreateInstance(Type type, DependenciesConfiguration dependencyConfiguration)
         {
+            
             var constructors = ChooseConstructors(type).ToList();
             if (constructors.Count == 0) throw new CreatorException($"{type} has no injectable constructor");
             foreach (var constructor in constructors)
@@ -28,7 +48,13 @@ namespace DependencyInjectionContainer
             var provider = new DependencyProvider(dependencyConfiguration);
             return parameters.Select(provider.Resolve);
         }
+        private static IEnumerable<object> ProvideFields(IEnumerable<FieldInfo> fields, DependenciesConfiguration dependencyConfiguration)
+        {
 
+            var provider = new DependencyProvider(dependencyConfiguration);
+            return fields.Select(provider.Resolve);
+        }
+            
         private static IEnumerable<ConstructorInfo> ChooseConstructors(Type type)
         {
             return type.GetConstructors()

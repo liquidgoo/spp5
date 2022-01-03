@@ -22,6 +22,12 @@ namespace DependencyInjectionContainer
             return Resolve(parameter.ParameterType, name);
         }
 
+        internal object Resolve(FieldInfo field)
+        {
+            var name = field.GetCustomAttribute<DependencyKeyAttribute>()?.Key;
+            return Resolve(field.FieldType, name);
+        }
+
         public TInterface Resolve<TInterface>()
             where TInterface : class
         {
@@ -69,22 +75,15 @@ namespace DependencyInjectionContainer
 
         private object ResolveDependency(Dependency dependency)
         {
-            if (_dependencyConfiguration.IsExcluded(dependency.Type))
-                throw new DependencyException($"Dependency type {dependency.Type} leads to recursion!");
-            _dependencyConfiguration.ExcludeType(dependency.Type);
-
             object result = null;
-            if (dependency.LifeCycle == LifeCycle.InstancePerDependency)
-            {
-                result = Creator.CreateInstance(dependency.Type, _dependencyConfiguration);
-            }
-            else if (dependency.LifeCycle == LifeCycle.Singleton)
+
+            if (dependency.LifeCycle == LifeCycle.Singleton)
             {
                 lock (dependency)
                 {
                     if (dependency.Instance == null)
                     {
-                        result = Creator.CreateInstance(dependency.Type, _dependencyConfiguration);
+                        result = Creator.CreateSingleton(dependency, _dependencyConfiguration);
                         dependency.Instance = result;
                     }
                     else
@@ -93,8 +92,21 @@ namespace DependencyInjectionContainer
                     }
                 }
             }
-            _dependencyConfiguration.RemoveFromExcluded(dependency.Type);
+            else
+            {
 
+                if (_dependencyConfiguration.IsExcluded(dependency.Type))
+                    //throw new DependencyException($"Dependency type {dependency.Type} leads to recursion!");
+                    return null;
+                _dependencyConfiguration.ExcludeType(dependency.Type);
+
+                if (dependency.LifeCycle == LifeCycle.InstancePerDependency)
+                {
+                    result = Creator.CreateInstance(dependency.Type, _dependencyConfiguration);
+                }
+
+                _dependencyConfiguration.RemoveFromExcluded(dependency.Type);
+            }
             return result;
         }
 
@@ -120,6 +132,7 @@ namespace DependencyInjectionContainer
                 {
                     genericDependency = GetNamedDependency(@interface.GetGenericTypeDefinition(), key);
                 }
+
                 var genericType = genericDependency.Type.MakeGenericType(@interface.GenericTypeArguments);
                 if (genericDependency.Instance == null)
                 {
