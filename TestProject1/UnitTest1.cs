@@ -12,6 +12,20 @@ namespace TestProject1
     public class UnitTest1
     {
         [TestMethod]
+        public void CircularSingleton()
+        {
+            var config = new DependenciesConfiguration();
+            config.Register<IA, A>(LifeCycle.Singleton);
+            config.Register<IB, B>(LifeCycle.Singleton);
+
+            var dp = new DependencyProvider(config);
+
+            IA a = dp.Resolve<IA>();
+
+            Assert.AreSame(a, ((B)((A)a).b).a);
+            Assert.AreSame(((A)a).b,((A)((B)((A)a).b).a).b);
+        }
+        [TestMethod]
         public void SimpleGenericTest()
         {
             var configuration = new DependenciesConfiguration();
